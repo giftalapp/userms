@@ -1,0 +1,4 @@
+secrets/
+bin/
+.aws/
+.env

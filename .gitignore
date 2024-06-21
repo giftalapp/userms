@@ -1,4 +1,4 @@
 secrets/
 bin/
 .aws/
-.env
+.config

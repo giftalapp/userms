@@ -2,11 +2,11 @@
 this is an authentication microservice made for a new app im building, Giftal.
 
 i'm still working on it. The goal is to finish the following checklist
-- [ ] implement TOTP
+- [x] implement TOTP
 - [ ] implement resend time limits
-- [ ] implement expiry
+- [x] implement expiry
 - [ ] implement SMS send (Amazon SNS)
 - [ ] implement WhatsApp send (TODO)
-- ...
+- [ ] implement rate limit by ip address
 
 > feel free to re-use this repo

@@ -1,5 +1,11 @@
 package pub
 
+import (
+	"time"
+
+	"github.com/giftalapp/authsrv/utilities/bucket"
+)
+
 type PubService interface {
 	Send(string) (string, error)
 }
@@ -9,8 +15,14 @@ type Pub struct {
 	WhatsApp *WhatsApp
 }
 
-func NewPubClient() (*Pub, error) {
+func NewPubClient(redisURL string) (*Pub, error) {
 	sc, err := initSNS()
+
+	if err != nil {
+		return nil, err
+	}
+
+	bucket, err := bucket.NewBucket(redisURL, time.Second*30)
 
 	if err != nil {
 		return nil, err
@@ -18,7 +30,8 @@ func NewPubClient() (*Pub, error) {
 
 	return &Pub{
 		SMS: &SMS{
-			sc: sc,
+			sc:     sc,
+			bucket: bucket,
 		},
 		WhatsApp: &WhatsApp{},
 	}, nil

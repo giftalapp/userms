@@ -14,6 +14,7 @@ type Config struct {
 	DBPassword string
 	DBAddr     string
 	DBName     string
+	RedisURL   string
 }
 
 var Env = initConfig()
@@ -32,6 +33,7 @@ func initConfig() *Config {
 		DBPassword: getEnv("DB_PASSWORD", "secret"),
 		DBAddr:     getEnv("DB_ADDR", "./test.db"),
 		DBName:     getEnv("DB_NAME", "giftal"),
+		RedisURL:   getEnv("REDIS_URL", "redis://:@localhost:6379/0"),
 	}
 }
 

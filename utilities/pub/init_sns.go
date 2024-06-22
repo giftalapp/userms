@@ -20,16 +20,15 @@ func initSNS() (*sns.Client, error) {
 	topicPages := sns.NewListTopicsPaginator(sc, &sns.ListTopicsInput{})
 
 	for topicPages.HasMorePages() {
-		topicPage, err := topicPages.NextPage(context.TODO())
+		_, err := topicPages.NextPage(context.TODO())
 
 		if err != nil {
 			return nil, err
 		}
 
-		for _, topic := range topicPage.Topics {
-			log.Printf("[SNS] Available Topic: %s\n", *topic.TopicArn)
-		}
 	}
+
+	log.Println("[INFO] Connected to Amazon SNS")
 
 	return sc, nil
 }

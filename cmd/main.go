@@ -19,7 +19,7 @@ func main() {
 	}
 
 	log.Println("[INFO] Connecting to Pub Client")
-	pubc, err := pub.NewPubClient()
+	pubc, err := pub.NewPubClient(config.Env.RedisURL)
 
 	if err != nil {
 		log.Fatalf("[ERROR] while Connecting to Pub Client: %s", err)

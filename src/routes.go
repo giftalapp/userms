@@ -1,29 +1,32 @@
 package src
 
 import (
+	"database/sql"
 	"net/http"
 
-	"github.com/aws/aws-sdk-go-v2/service/sns"
-	"github.com/giftalapp/authsrv/src/handlers"
+	"github.com/giftalapp/authsrv/src/handlers/verification"
+	"github.com/giftalapp/authsrv/src/middleware"
+	"github.com/giftalapp/authsrv/utilities/pub"
 )
 
 type RouteHandler struct {
-	sns *sns.Client
+	db   *sql.DB
+	pubc *pub.Pub
 }
 
-func NewRouteHandler(sns *sns.Client) (*RouteHandler, error) {
+func NewRouteHandler(db *sql.DB, pubc *pub.Pub) *RouteHandler {
 	return &RouteHandler{
-		sns: sns,
-	}, nil
-}
-
-// Custom auth-to-handler compatibility
-func (rh *RouteHandler) asAuthHandler(authHandler func(http.ResponseWriter, *http.Request, *sns.Client)) func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		authHandler(w, r, rh.sns)
+		db:   db,
+		pubc: pubc,
 	}
 }
 
-func (rh *RouteHandler) RegisterRoutes(router *http.ServeMux) {
-	router.HandleFunc("POST /verify", rh.asAuthHandler(handlers.VerifyTokenHandler))
+func (rh *RouteHandler) RegisterRoutes(router *http.ServeMux) http.Handler {
+	router.HandleFunc("POST /verification/begin", verification.BeginHandler)
+	router.HandleFunc("POST /verification/resend", verification.ResendHandler)
+	router.HandleFunc("POST /verification/verify", verification.VerifyHandler)
+
+	routedHandler := middleware.NewServiceInjector(router, rh.db, rh.pubc)
+
+	return routedHandler
 }

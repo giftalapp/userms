@@ -4,37 +4,33 @@ import (
 	"database/sql"
 	"net/http"
 
-	"github.com/aws/aws-sdk-go-v2/service/sns"
+	"github.com/giftalapp/authsrv/utilities/pub"
 )
 
 type AuthService struct {
 	addr string
 	db   *sql.DB
-	sns  *sns.Client
+	pubc *pub.Pub
 }
 
-func NewAuthService(addr string, db *sql.DB, sns *sns.Client) *AuthService {
+func NewAuthService(addr string, db *sql.DB, pubc *pub.Pub) *AuthService {
 	return &AuthService{
 		addr: addr,
 		db:   db,
-		sns:  sns,
+		pubc: pubc,
 	}
 }
 
 func (srv *AuthService) Run() error {
 	handler := http.NewServeMux()
 
+	routeHandler := NewRouteHandler(srv.db, srv.pubc)
+	routedHandler := routeHandler.RegisterRoutes(handler)
+
 	server := &http.Server{
 		Addr:    srv.addr,
-		Handler: handler,
+		Handler: routedHandler,
 	}
-
-	routeHandler, err := NewRouteHandler(srv.sns)
-	if err != nil {
-		return err
-	}
-
-	routeHandler.RegisterRoutes(handler)
 
 	return server.ListenAndServe()
 }

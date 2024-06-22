@@ -1,7 +1,7 @@
 .PHONY: build   
 
 build:
-	@go build -o bin/authsrv cmd/main.go 
+	@go build -o build/authsrv cmd/main.go 
 
 run: build
 	@./bin/authsrv

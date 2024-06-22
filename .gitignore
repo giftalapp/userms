@@ -1,4 +1,4 @@
 secrets/
-bin/
+build/
 .aws/
 .config

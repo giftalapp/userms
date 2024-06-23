@@ -8,22 +8,22 @@ import (
 	"github.com/giftalapp/authsrv/src/middleware"
 )
 
-type BeginRequest struct {
+type SendRequest struct {
 	PhoneNumber string `json:"phone_number"`
 	Service     string `json:"service"`
 }
 
-type BeginResponse struct {
+type SendResponse struct {
 	Token string `json:"token"`
 	Error string `json:"error,omitempty"`
 }
 
-func BeginHandler(w http.ResponseWriter, r *http.Request) {
+func SendHandler(w http.ResponseWriter, r *http.Request) {
 	// Initialize headers
 	w.Header().Add("Content-Type", "application/json")
 
 	// Prepare result map
-	response := BeginResponse{
+	response := SendResponse{
 		Token: "",
 		Error: "",
 	}
@@ -32,7 +32,7 @@ func BeginHandler(w http.ResponseWriter, r *http.Request) {
 	pubc := middleware.GetPub(r)
 
 	// Decode json request
-	request := BeginRequest{}
+	request := SendRequest{}
 	json.NewDecoder(r.Body).Decode(&request)
 
 	// Create and store token
@@ -48,9 +48,10 @@ func BeginHandler(w http.ResponseWriter, r *http.Request) {
 		err = fmt.Errorf("the service %s is not supported", request.Service)
 	}
 
+	response.Token = token
+
 	if err != nil {
 		w.WriteHeader(400)
-		response.Token = token
 		response.Error = err.Error()
 	}
 

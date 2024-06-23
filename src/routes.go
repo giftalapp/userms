@@ -22,11 +22,12 @@ func NewRouteHandler(db *sql.DB, pubc *pub.Pub) *RouteHandler {
 }
 
 func (rh *RouteHandler) RegisterRoutes(router *http.ServeMux) http.Handler {
-	router.HandleFunc("POST /verification/begin", verification.BeginHandler)
+	router.HandleFunc("POST /verification/send", verification.SendHandler)
 	router.HandleFunc("POST /verification/resend", verification.ResendHandler)
 	router.HandleFunc("POST /verification/verify", verification.VerifyHandler)
 
-	routedHandler := middleware.NewServiceInjector(router, rh.db, rh.pubc)
+	injectedHandler := middleware.NewServiceInjector(router, rh.db, rh.pubc)
+	rateLimitedHandler := middleware.NewRateLimitter(injectedHandler)
 
-	return routedHandler
+	return rateLimitedHandler
 }

@@ -3,18 +3,24 @@ package config
 import (
 	"log"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
 )
 
 type Config struct {
-	APIHost    string
-	APIPort    string
-	DBUser     string
-	DBPassword string
-	DBAddr     string
-	DBName     string
-	RedisURL   string
+	AppName                  string
+	APIHost                  string
+	APIPort                  string
+	DBUser                   string
+	DBPassword               string
+	DBAddr                   string
+	DBName                   string
+	RedisURL                 string
+	RedisExpire              time.Duration
+	JWTSecret                string
+	RateLimitInversedSeconds float64
+	RateLimitRequests        int
 }
 
 var Env = initConfig()
@@ -27,13 +33,18 @@ func initConfig() *Config {
 	}
 
 	return &Config{
-		APIHost:    getEnv("API_HOST", "127.0.0.1"),
-		APIPort:    getEnv("API_PORT", "8080"),
-		DBUser:     getEnv("DB_USER", "server"),
-		DBPassword: getEnv("DB_PASSWORD", "secret"),
-		DBAddr:     getEnv("DB_ADDR", "./test.db"),
-		DBName:     getEnv("DB_NAME", "giftal"),
-		RedisURL:   getEnv("REDIS_URL", "redis://:@localhost:6379/0"),
+		AppName:                  "Giftal [Auth]",
+		APIHost:                  getEnv("API_HOST", "127.0.0.1"),
+		APIPort:                  getEnv("API_PORT", "8080"),
+		DBUser:                   getEnv("DB_USER", "server"),
+		DBPassword:               getEnv("DB_PASSWORD", "secret"),
+		DBAddr:                   getEnv("DB_ADDR", "./test.db"),
+		DBName:                   getEnv("DB_NAME", "giftal"),
+		RedisURL:                 getEnv("REDIS_URL", "redis://:@localhost:6379/0"),
+		RedisExpire:              time.Minute * 6,
+		JWTSecret:                getEnv("JWT_SECRET", "secret"),
+		RateLimitInversedSeconds: 1,
+		RateLimitRequests:        5,
 	}
 }
 

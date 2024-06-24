@@ -27,6 +27,8 @@ func NewBucket(redisURL string, expiryTime time.Duration) (*Bucket, error) {
 		return nil, err
 	}
 
+	rc.FlushDB(context.Background())
+
 	log.Println("[INFO] Connected to Redis")
 
 	return &Bucket{
@@ -36,14 +38,27 @@ func NewBucket(redisURL string, expiryTime time.Duration) (*Bucket, error) {
 	}, nil
 }
 
-func (b *Bucket) Get(key string) error {
+func (b *Bucket) Get(key string) (interface{}, time.Duration, error) {
 	status := b.rc.Get(b.ctx, key)
+	ttl, err := b.rc.TTL(b.ctx, key).Result()
+
+	if err != nil {
+		return nil, time.Second, err
+	}
+
+	return status.Val(), ttl, status.Err()
+}
+
+func (b *Bucket) Set(key string, value interface{}, exp time.Duration) error {
+	if exp == time.Duration(0) {
+		exp = b.exp
+	}
+
+	status := b.rc.Set(b.ctx, key, value, exp)
 
 	return status.Err()
 }
 
-func (b *Bucket) Set(key string, value string) error {
-	status := b.rc.Set(b.ctx, key, value, b.exp)
-
-	return status.Err()
+func (b *Bucket) Del(key string) {
+	b.rc.Del(b.ctx, key)
 }

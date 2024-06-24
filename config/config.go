@@ -17,7 +17,8 @@ type Config struct {
 	DBAddr                   string
 	DBName                   string
 	RedisURL                 string
-	RedisExpire              time.Duration
+	OTPExpire                time.Duration
+	OTPRefresh               time.Duration
 	JWTSecret                string
 	RateLimitInversedSeconds float64
 	RateLimitRequests        int
@@ -41,7 +42,8 @@ func initConfig() *Config {
 		DBAddr:                   getEnv("DB_ADDR", "./test.db"),
 		DBName:                   getEnv("DB_NAME", "giftal"),
 		RedisURL:                 getEnv("REDIS_URL", "redis://:@localhost:6379/0"),
-		RedisExpire:              time.Minute * 6,
+		OTPExpire:                time.Minute * 6,
+		OTPRefresh:               time.Minute * 2,
 		JWTSecret:                getEnv("JWT_SECRET", "secret"),
 		RateLimitInversedSeconds: 1,
 		RateLimitRequests:        5,

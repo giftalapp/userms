@@ -2,18 +2,21 @@ package verification
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
+
+	"github.com/giftalapp/authsrv/src/middleware"
 )
 
 type ResendRequest struct {
-	PhoneNumber string `json:"phone_number"`
-	Service     string `json:"service"`
+	VerificationToken string `json:"verification_token"`
+	Service           string `json:"service"`
 }
 
 type ResendResponse struct {
-	Token string `json:"token"`
-	Error string `json:"error,omitempty"`
+	Error      string `json:"error,omitempty"`
+	statusCode int
 }
 
 func ResendHandler(w http.ResponseWriter, r *http.Request) {
@@ -22,13 +25,33 @@ func ResendHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Prepare result map
 	response := ResendResponse{
-		Token: "",
-		Error: "",
+		statusCode: http.StatusCreated,
 	}
+
+	// Reference Dependencies
+	pubc := middleware.GetPub(r)
 
 	// Decode json request
 	request := ResendRequest{}
 	json.NewDecoder(r.Body).Decode(&request)
+
+	// Create and store token && Send OTP
+	var err error = nil
+
+	switch request.Service {
+	case "sms":
+		err = pubc.SMS.Resend(request.VerificationToken)
+	case "whatsapp":
+		err = pubc.WhatsApp.Resend(request.VerificationToken)
+	default:
+		err = errors.New("unsupported_service_error")
+	}
+
+	if err != nil {
+		response.statusCode, response.Error = handleError(err)
+	}
+
+	fmt.Printf("%s (TODO: DATABASE OP)\n", request.VerificationToken)
 
 	// Return success
 	responseBinary, _ := json.Marshal(response)

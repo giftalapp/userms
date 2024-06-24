@@ -25,3 +25,16 @@ func (s *SMS) Send(phoneNumber string) (string, error) {
 
 	return token, nil
 }
+
+func (s *SMS) Resend(phoneNumber string) error {
+	otp, err := updateOtpCounter(s.bucket, phoneNumber)
+
+	if err != nil {
+		return err
+	}
+
+	log.Printf("[PUB] Re-Send SMS to %s", phoneNumber)
+	log.Printf("[PUB] SENT OTP: %s\n", otp)
+
+	return nil
+}

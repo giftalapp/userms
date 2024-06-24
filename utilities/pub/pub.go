@@ -1,25 +1,25 @@
 package pub
 
 import (
-	"bytes"
-	"crypto/sha256"
-	"encoding/base64"
+	"errors"
 	"fmt"
-	"io"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/giftalapp/authsrv/config"
 	"github.com/giftalapp/authsrv/utilities/bucket"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/pquerna/otp/totp"
+	"github.com/pquerna/otp/hotp"
 )
 
 type PubService interface {
 	Send(string) (string, error)
-	Resend(string)
+	Resend(string) error
 }
 
 type Pub struct {
+	bucket   *bucket.Bucket
 	SMS      *SMS
 	WhatsApp *WhatsApp
 }
@@ -31,13 +31,14 @@ func NewPubClient(redisURL string) (*Pub, error) {
 		return nil, err
 	}
 
-	bucket, err := bucket.NewBucket(redisURL, config.Env.RedisExpire)
+	bucket, err := bucket.NewBucket(redisURL, config.Env.OTPExpire)
 
 	if err != nil {
 		return nil, err
 	}
 
 	return &Pub{
+		bucket: bucket,
 		SMS: &SMS{
 			sc:     sc,
 			bucket: bucket,
@@ -48,55 +49,58 @@ func NewPubClient(redisURL string) (*Pub, error) {
 	}, nil
 }
 
-func getSHA256(data string) (string, error) {
-	h := sha256.New()
-	io.Copy(
-		h,
-		bytes.NewReader([]byte(data)),
-	)
-	hSum := base64.URLEncoding.EncodeToString(h.Sum(nil))
+func (p *Pub) Verify(otp string, signedToken string) (string, error) {
+	token, err := jwt.Parse(signedToken, func(token *jwt.Token) (interface{}, error) {
+		_, ok := token.Method.(*jwt.SigningMethodHMAC)
 
-	return hSum, nil
-}
+		if !ok {
+			return nil, errors.New("server_invalid_secret_error")
+		}
 
-func createOtpAndToken(bucket *bucket.Bucket, phoneNumber string) (string, string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"iss":   config.Env.AppName,
-		"phone": phoneNumber,
+		return []byte(config.Env.JWTSecret), nil
 	})
 
-	signedToken, err := token.SignedString([]byte(config.Env.JWTSecret))
-
 	if err != nil {
-		return "", "", err
+		if strings.HasSuffix(err.Error(), "server_") {
+			return "", err
+		}
+
+		return "", errors.New("invalid_token_error")
 	}
+
+	claims := token.Claims.(jwt.MapClaims)
 
 	signedTokenHash, err := getSHA256(signedToken)
 
 	if err != nil {
-		return "", "", err
+		return "", fmt.Errorf("server_hash_error %s", err)
 	}
 
-	if err := bucket.Get(signedTokenHash); err == nil {
-		return "", "", fmt.Errorf("phone number is already being verified")
+	var otpSecret interface{}
+	var ttl time.Duration
+
+	if otpSecret, ttl, err = p.bucket.Get(signedTokenHash); err != nil {
+		return "", errors.New("token_expired_error")
 	}
 
-	key, err := totp.Generate(totp.GenerateOpts{
-		Issuer:      config.Env.AppName,
-		AccountName: phoneNumber,
-	})
+	otpCounter, _, _ := p.bucket.Get("counter_" + signedTokenHash)
+	counter, _ := strconv.ParseUint(otpCounter.(string), 10, 64)
 
-	if err != nil {
-		return "", "", err
+	passedSeconds := uint64((config.Env.OTPExpire - ttl).Seconds())
+	refreshIn := uint64(config.Env.OTPRefresh.Seconds()) * counter
+
+	if passedSeconds > refreshIn {
+		return "", errors.New("otp_expired_error")
 	}
 
-	otp, err := totp.GenerateCode(key.Secret(), time.Now())
+	ok := hotp.Validate(otp, counter, otpSecret.(string))
 
-	if err != nil {
-		return "", "", err
+	if !ok {
+		return "", errors.New("invalid_otp_error")
 	}
 
-	err = bucket.Set(signedTokenHash, key.Secret())
+	p.bucket.Del(signedTokenHash)
+	p.bucket.Del("counter_" + signedTokenHash)
 
-	return otp, signedToken, err
+	return claims["phone"].(string), nil
 }

@@ -2,6 +2,7 @@ package verification
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -14,8 +15,9 @@ type SendRequest struct {
 }
 
 type SendResponse struct {
-	Token string `json:"token"`
-	Error string `json:"error,omitempty"`
+	Token      string `json:"token"`
+	Error      string `json:"error,omitempty"`
+	statusCode int
 }
 
 func SendHandler(w http.ResponseWriter, r *http.Request) {
@@ -24,8 +26,7 @@ func SendHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Prepare result map
 	response := SendResponse{
-		Token: "",
-		Error: "",
+		statusCode: http.StatusOK,
 	}
 
 	// Reference Dependencies
@@ -35,7 +36,7 @@ func SendHandler(w http.ResponseWriter, r *http.Request) {
 	request := SendRequest{}
 	json.NewDecoder(r.Body).Decode(&request)
 
-	// Create and store token
+	// Create and store token && Send OTP
 	token := ""
 	var err error = nil
 
@@ -45,17 +46,18 @@ func SendHandler(w http.ResponseWriter, r *http.Request) {
 	case "whatsapp":
 		token, err = pubc.WhatsApp.Send(request.PhoneNumber)
 	default:
-		err = fmt.Errorf("the service %s is not supported", request.Service)
+		err = errors.New("unsupported_service_error")
 	}
 
 	response.Token = token
 
 	if err != nil {
-		w.WriteHeader(400)
-		response.Error = err.Error()
+		response.statusCode, response.Error = handleError(err)
 	}
 
-	// Return success
+	// Return response
 	responseBinary, _ := json.Marshal(response)
+
+	w.WriteHeader(response.statusCode)
 	fmt.Fprintln(w, string(responseBinary))
 }

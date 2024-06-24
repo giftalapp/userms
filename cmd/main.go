@@ -34,7 +34,7 @@ func main() {
 	}
 
 	address := fmt.Sprintf("%s:%s", config.Env.APIHost, config.Env.APIPort)
-	authsrv := src.NewAuthService(address, db, pubc)
+	authsrv := src.NewAuthService(address, db, fb, pubc)
 	log.Printf("[INFO] starting server at address at %s\n", address)
 
 	if err = authsrv.Run(); err != nil {

@@ -1,4 +1,4 @@
-module github.com/giftalapp/authsrv
+module github.com/giftalapp/userms
 
 go 1.22.3
 

@@ -34,7 +34,7 @@ func initConfig() *Config {
 	}
 
 	return &Config{
-		AppName:                  "Giftal [Auth]",
+		AppName:                  "Giftal [User]",
 		APIHost:                  getEnv("API_HOST", "127.0.0.1"),
 		APIPort:                  getEnv("API_PORT", "8080"),
 		DBUser:                   getEnv("DB_USER", "server"),

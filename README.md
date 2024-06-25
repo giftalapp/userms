@@ -1,5 +1,5 @@
-# Auth Microservice
-this is an authentication microservice made for a new app im building, Giftal.
+# User Microservice
+this is a user microservice made for a new app im building, Giftal.
 
 i'm still working on it. The goal is to finish the following checklist
 - [x] implement TOTP

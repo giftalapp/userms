@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/giftalapp/authsrv/config"
+	"github.com/giftalapp/userms/config"
 	"golang.org/x/time/rate"
 )
 

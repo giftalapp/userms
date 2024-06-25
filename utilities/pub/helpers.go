@@ -10,8 +10,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/giftalapp/authsrv/config"
-	"github.com/giftalapp/authsrv/utilities/bucket"
+	"github.com/giftalapp/userms/config"
+	"github.com/giftalapp/userms/utilities/bucket"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/pquerna/otp/hotp"
 )

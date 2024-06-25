@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/aws/aws-sdk-go-v2/service/sns"
-	"github.com/giftalapp/authsrv/utilities/bucket"
+	"github.com/giftalapp/userms/utilities/bucket"
 )
 
 type SMS struct {

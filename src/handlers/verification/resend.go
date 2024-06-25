@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/giftalapp/authsrv/src/middleware"
+	"github.com/giftalapp/userms/src/middleware"
 )
 
 type ResendRequest struct {
@@ -25,7 +25,7 @@ func ResendHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Prepare result map
 	response := ResendResponse{
-		statusCode: http.StatusCreated,
+		statusCode: http.StatusOK,
 	}
 
 	// Reference Dependencies

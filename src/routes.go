@@ -5,9 +5,9 @@ import (
 	"net/http"
 
 	firebase "firebase.google.com/go/v4"
-	"github.com/giftalapp/authsrv/src/handlers/verification"
-	"github.com/giftalapp/authsrv/src/middleware"
-	"github.com/giftalapp/authsrv/utilities/pub"
+	"github.com/giftalapp/userms/src/handlers/verification"
+	"github.com/giftalapp/userms/src/middleware"
+	"github.com/giftalapp/userms/utilities/pub"
 )
 
 type RouteHandler struct {

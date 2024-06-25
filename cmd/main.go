@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/giftalapp/authsrv/config"
-	"github.com/giftalapp/authsrv/src"
-	"github.com/giftalapp/authsrv/utilities/db"
-	"github.com/giftalapp/authsrv/utilities/fb"
-	"github.com/giftalapp/authsrv/utilities/pub"
+	"github.com/giftalapp/userms/config"
+	"github.com/giftalapp/userms/src"
+	"github.com/giftalapp/userms/utilities/db"
+	"github.com/giftalapp/userms/utilities/fb"
+	"github.com/giftalapp/userms/utilities/pub"
 )
 
 func main() {

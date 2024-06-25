@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	firebase "firebase.google.com/go/v4"
-	"github.com/giftalapp/authsrv/utilities/pub"
+	"github.com/giftalapp/userms/utilities/pub"
 )
 
 type AuthService struct {

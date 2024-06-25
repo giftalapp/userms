@@ -3,3 +3,4 @@ build/
 .aws/
 .config
 .firebase.json
+test.db

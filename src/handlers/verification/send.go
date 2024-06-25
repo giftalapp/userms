@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/giftalapp/authsrv/src/middleware"
+	"github.com/giftalapp/userms/src/middleware"
 )
 
 type SendRequest struct {

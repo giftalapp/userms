@@ -3,7 +3,7 @@ package pub
 import (
 	"log"
 
-	"github.com/giftalapp/authsrv/utilities/bucket"
+	"github.com/giftalapp/userms/utilities/bucket"
 )
 
 type WhatsApp struct {

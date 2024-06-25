@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"net/http"
 
-	"github.com/giftalapp/authsrv/utilities/pub"
+	"github.com/giftalapp/userms/utilities/pub"
 )
 
 type ServiceKey int

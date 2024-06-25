@@ -1,22 +1,22 @@
 package src
 
 import (
-	"database/sql"
 	"net/http"
 
 	firebase "firebase.google.com/go/v4"
 	"github.com/giftalapp/userms/src/handlers/verification"
 	"github.com/giftalapp/userms/src/middleware"
 	"github.com/giftalapp/userms/utilities/pub"
+	"github.com/jackc/pgx/v5"
 )
 
 type RouteHandler struct {
-	db   *sql.DB
+	db   *pgx.Conn
 	fb   *firebase.App
 	pubc *pub.Pub
 }
 
-func NewRouteHandler(db *sql.DB, fb *firebase.App, pubc *pub.Pub) *RouteHandler {
+func NewRouteHandler(db *pgx.Conn, fb *firebase.App, pubc *pub.Pub) *RouteHandler {
 	return &RouteHandler{
 		db:   db,
 		fb:   fb,

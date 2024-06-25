@@ -1,7 +1,7 @@
 package verification
 
 import (
-	"database/sql"
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -11,6 +11,7 @@ import (
 	"github.com/giftalapp/userms/src/middleware"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 )
 
 type VerifyRequest struct {
@@ -55,7 +56,8 @@ func VerifyHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Register user if he doesn't exist
 	userRow := db.QueryRow(
-		"SELECT * FROM user WHERE phone = ?",
+		context.Background(),
+		`SELECT * FROM public."user" WHERE phone_number = $1`,
 		phoneNumber,
 	)
 
@@ -72,28 +74,34 @@ func VerifyHandler(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if err != nil {
-		if err == sql.ErrNoRows {
+		var subErr error
+
+		if err == pgx.ErrNoRows {
 			user.Uid = uuid.New().String()
 			user.PhoneNumber = phoneNumber
 			response.statusCode = http.StatusCreated
 
-			_, err = db.Exec(
-				"INSERT INTO user (uid, phone) VALUES (?, ?)",
+			_, subErr = db.Exec(
+				context.Background(),
+				`INSERT INTO public."user" (uid, phone_number) VALUES ($1, $2)`,
 				user.Uid,
 				user.PhoneNumber,
 			)
 
-			if err != nil {
+			if subErr != nil {
 				response.statusCode, response.Error = handleError(fmt.Errorf("server_sql_error %s", err.Error()))
 			}
 		} else {
 			response.statusCode, response.Error = handleError(fmt.Errorf("server_sql_error %s", err.Error()))
 		}
 
-		responseBinary, _ := json.Marshal(response)
+		if subErr != nil {
+			responseBinary, _ := json.Marshal(response)
 
-		w.WriteHeader(response.statusCode)
-		fmt.Fprintln(w, string(responseBinary))
+			w.WriteHeader(response.statusCode)
+			fmt.Fprintln(w, string(responseBinary))
+			return
+		}
 	}
 
 	// Calculate user_token jwt
@@ -105,6 +113,10 @@ func VerifyHandler(w http.ResponseWriter, r *http.Request) {
 
 	if response.UserToken, err = userToken.SignedString([]byte(config.Env.JWTSecret)); err != nil {
 		response.statusCode, response.Error = handleError(fmt.Errorf("server_jwt_error %s", err.Error()))
+		responseBinary, _ := json.Marshal(response)
+
+		w.WriteHeader(response.statusCode)
+		fmt.Fprintln(w, string(responseBinary))
 	}
 
 	// Return response

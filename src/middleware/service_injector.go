@@ -2,10 +2,10 @@ package middleware
 
 import (
 	"context"
-	"database/sql"
 	"net/http"
 
 	"github.com/giftalapp/userms/utilities/pub"
+	"github.com/jackc/pgx/v5"
 )
 
 type ServiceKey int
@@ -15,8 +15,8 @@ const (
 	PubKey ServiceKey = 1
 )
 
-func GetDB(r *http.Request) *sql.DB {
-	return r.Context().Value(DBKey).(*sql.DB)
+func GetDB(r *http.Request) *pgx.Conn {
+	return r.Context().Value(DBKey).(*pgx.Conn)
 }
 
 func GetPub(r *http.Request) *pub.Pub {
@@ -25,11 +25,11 @@ func GetPub(r *http.Request) *pub.Pub {
 
 type ServiceInjector struct {
 	handler http.Handler
-	db      *sql.DB
+	db      *pgx.Conn
 	pubc    *pub.Pub
 }
 
-func NewServiceInjector(handler http.Handler, db *sql.DB, pubc *pub.Pub) *ServiceInjector {
+func NewServiceInjector(handler http.Handler, db *pgx.Conn, pubc *pub.Pub) *ServiceInjector {
 	return &ServiceInjector{
 		handler: handler,
 		db:      db,

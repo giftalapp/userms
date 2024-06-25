@@ -12,10 +12,7 @@ type Config struct {
 	AppName                  string
 	APIHost                  string
 	APIPort                  string
-	DBUser                   string
-	DBPassword               string
 	DBAddr                   string
-	DBName                   string
 	RedisURL                 string
 	OTPExpire                time.Duration
 	OTPRefresh               time.Duration
@@ -37,10 +34,7 @@ func initConfig() *Config {
 		AppName:                  "Giftal [User]",
 		APIHost:                  getEnv("API_HOST", "127.0.0.1"),
 		APIPort:                  getEnv("API_PORT", "8080"),
-		DBUser:                   getEnv("DB_USER", "server"),
-		DBPassword:               getEnv("DB_PASSWORD", "secret"),
 		DBAddr:                   getEnv("DB_ADDR", "./test.db"),
-		DBName:                   getEnv("DB_NAME", "giftal"),
 		RedisURL:                 getEnv("REDIS_URL", "redis://:@localhost:6379/0"),
 		OTPExpire:                time.Minute * 6,
 		OTPRefresh:               time.Minute * 2,

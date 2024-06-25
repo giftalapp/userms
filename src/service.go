@@ -1,21 +1,21 @@
 package src
 
 import (
-	"database/sql"
 	"net/http"
 
 	firebase "firebase.google.com/go/v4"
 	"github.com/giftalapp/userms/utilities/pub"
+	"github.com/jackc/pgx/v5"
 )
 
 type AuthService struct {
 	addr string
-	db   *sql.DB
+	db   *pgx.Conn
 	fb   *firebase.App
 	pubc *pub.Pub
 }
 
-func NewAuthService(addr string, db *sql.DB, fb *firebase.App, pubc *pub.Pub) *AuthService {
+func NewAuthService(addr string, db *pgx.Conn, fb *firebase.App, pubc *pub.Pub) *AuthService {
 	return &AuthService{
 		addr: addr,
 		db:   db,

@@ -57,7 +57,7 @@ func VerifyHandler(w http.ResponseWriter, r *http.Request) {
 	// Register user if he doesn't exist
 	userRow := db.QueryRow(
 		context.Background(),
-		`SELECT * FROM public."user" WHERE phone_number = $1`,
+		`SELECT * FROM userms.user WHERE phone_number = $1`,
 		phoneNumber,
 	)
 
@@ -83,7 +83,7 @@ func VerifyHandler(w http.ResponseWriter, r *http.Request) {
 
 			_, subErr = db.Exec(
 				context.Background(),
-				`INSERT INTO public."user" (uid, phone_number) VALUES ($1, $2)`,
+				`INSERT INTO userms.user (uid, phone_number) VALUES ($1, $2)`,
 				user.Uid,
 				user.PhoneNumber,
 			)

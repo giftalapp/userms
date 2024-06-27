@@ -1,4 +1,6 @@
-CREATE TABLE public."user"
+CREATE SCHEMA userms;
+
+CREATE TABLE userms.user
 (
     uid char(36) NOT NULL,
     username varchar(64),
@@ -10,6 +12,3 @@ CREATE TABLE public."user"
 
     PRIMARY KEY (uid)
 );
-
-ALTER TABLE IF EXISTS public."user"
-    OWNER to userms;

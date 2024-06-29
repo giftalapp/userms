@@ -14,7 +14,7 @@ import (
 
 func main() {
 	db, err := pgx.Connect(context.Background(), config.Env.DBAddr)
-	log.Printf("[INFO] Connecting to database at %s\n", config.Env.DBAddr)
+	log.Printf("[INFO] Connecting to database")
 
 	if err != nil {
 		log.Fatalf("[ERROR] while connecting to database: %s\n", err)

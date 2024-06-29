@@ -2,7 +2,6 @@ package verification
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 
@@ -11,7 +10,6 @@ import (
 
 type ResendRequest struct {
 	VerificationToken string `json:"verification_token"`
-	Service           string `json:"service"`
 }
 
 type ResendResponse struct {
@@ -35,23 +33,12 @@ func ResendHandler(w http.ResponseWriter, r *http.Request) {
 	request := ResendRequest{}
 	json.NewDecoder(r.Body).Decode(&request)
 
-	// Create and store token && Send OTP
-	var err error = nil
-
-	switch request.Service {
-	case "sms":
-		err = pubc.SMS.Resend(request.VerificationToken)
-	case "whatsapp":
-		err = pubc.WhatsApp.Resend(request.VerificationToken)
-	default:
-		err = errors.New("unsupported_service_error")
-	}
+	// Send OTP
+	err := pubc.WhatsApp.Resend(request.VerificationToken, "en")
 
 	if err != nil {
 		response.statusCode, response.Error = handleError(err)
 	}
-
-	fmt.Printf("%s (TODO: DATABASE OP)\n", request.VerificationToken)
 
 	// Return success
 	responseBinary, _ := json.Marshal(response)

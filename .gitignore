@@ -4,3 +4,4 @@ build/
 .config
 .firebase.json
 test.db
+.upload.sh

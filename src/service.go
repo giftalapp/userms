@@ -8,15 +8,15 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-type AuthService struct {
+type UserService struct {
 	addr string
 	db   *pgx.Conn
 	fb   *firebase.App
 	pubc *pub.Pub
 }
 
-func NewAuthService(addr string, db *pgx.Conn, fb *firebase.App, pubc *pub.Pub) *AuthService {
-	return &AuthService{
+func NewUserService(addr string, db *pgx.Conn, fb *firebase.App, pubc *pub.Pub) *UserService {
+	return &UserService{
 		addr: addr,
 		db:   db,
 		fb:   fb,
@@ -24,7 +24,7 @@ func NewAuthService(addr string, db *pgx.Conn, fb *firebase.App, pubc *pub.Pub) 
 	}
 }
 
-func (srv *AuthService) Run() error {
+func (srv *UserService) Run() error {
 	handler := http.NewServeMux()
 
 	routeHandler := NewRouteHandler(srv.db, srv.fb, srv.pubc)

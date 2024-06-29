@@ -20,12 +20,11 @@ type PubService interface {
 
 type Pub struct {
 	bucket   *bucket.Bucket
-	SMS      *SMS
 	WhatsApp *WhatsApp
 }
 
 func NewPubClient(redisURL string) (*Pub, error) {
-	sc, err := initSNS()
+	wa, err := initWhatsApp()
 
 	if err != nil {
 		return nil, err
@@ -39,11 +38,8 @@ func NewPubClient(redisURL string) (*Pub, error) {
 
 	return &Pub{
 		bucket: bucket,
-		SMS: &SMS{
-			sc:     sc,
-			bucket: bucket,
-		},
 		WhatsApp: &WhatsApp{
+			wa:     wa,
 			bucket: bucket,
 		},
 	}, nil

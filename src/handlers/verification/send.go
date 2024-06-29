@@ -2,7 +2,6 @@ package verification
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 
@@ -11,7 +10,6 @@ import (
 
 type SendRequest struct {
 	PhoneNumber string `json:"phone_number"`
-	Service     string `json:"service"`
 }
 
 type SendResponse struct {
@@ -37,17 +35,7 @@ func SendHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&request)
 
 	// Create and store token && Send OTP
-	token := ""
-	var err error = nil
-
-	switch request.Service {
-	case "sms":
-		token, err = pubc.SMS.Send(request.PhoneNumber)
-	case "whatsapp":
-		token, err = pubc.WhatsApp.Send(request.PhoneNumber)
-	default:
-		err = errors.New("unsupported_service_error")
-	}
+	token, err := pubc.WhatsApp.Send(request.PhoneNumber, "en")
 
 	response.Token = token
 

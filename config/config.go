@@ -12,6 +12,10 @@ type Config struct {
 	AppName                  string
 	APIHost                  string
 	APIPort                  string
+	WhatsAppPhoneNumberID    string
+	WhatsAppID               string
+	WhatsAppToken            string
+	TestPhoneNumber          string
 	DBAddr                   string
 	RedisURL                 string
 	OTPExpire                time.Duration
@@ -34,7 +38,11 @@ func initConfig() *Config {
 		AppName:                  "Giftal [User]",
 		APIHost:                  getEnv("API_HOST", "127.0.0.1"),
 		APIPort:                  getEnv("API_PORT", "8080"),
-		DBAddr:                   getEnv("DB_ADDR", "./test.db"),
+		WhatsAppPhoneNumberID:    getEnv("WHATSAPP_PHONE_ID", "[REDACTED]"),
+		WhatsAppID:               getEnv("WHATSAPP_ID", "[REDACTED]"),
+		WhatsAppToken:            getEnv("WHATSAPP_TOKEN", "[REDACTED]"),
+		TestPhoneNumber:          getEnv("TEST_PHONE", "[REDACTED]"),
+		DBAddr:                   getEnv("DB_ADDR", "[REDACTED]"),
 		RedisURL:                 getEnv("REDIS_URL", "redis://:@localhost:6379/0"),
 		OTPExpire:                time.Minute * 6,
 		OTPRefresh:               time.Minute * 2,

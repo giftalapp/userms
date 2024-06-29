@@ -1,38 +1,59 @@
 package pub
 
 import (
-	"log"
+	"context"
+	"fmt"
 
 	"github.com/giftalapp/userms/utilities/bucket"
+	"github.com/piusalfred/whatsapp"
+	"github.com/piusalfred/whatsapp/models"
 )
 
 type WhatsApp struct {
 	PubService
+	wa     *whatsapp.Client
 	bucket *bucket.Bucket
 }
 
-func (w *WhatsApp) Send(phoneNumber string) (string, error) {
+func (w *WhatsApp) sendWhatsAppOtp(phoneNumber string, otp string, lang string) error {
+	_, err := w.wa.SendTextTemplate(context.Background(), phoneNumber, &whatsapp.TextTemplateRequest{
+		Name:         "en_verification_code",
+		LanguageCode: lang,
+		Body: []*models.TemplateParameter{
+			{
+				Type: "text",
+				Text: otp,
+			},
+		},
+	})
+
+	if err != nil {
+		err = fmt.Errorf("server_error %s", err)
+	}
+
+	return err
+}
+
+func (w *WhatsApp) Send(phoneNumber string, lang string) (string, error) {
 	otp, token, err := createOtpAndToken(w.bucket, phoneNumber)
 
 	if err != nil {
 		return "", err
 	}
 
-	log.Printf("[PUB] Send WhatsApp to %s", phoneNumber)
-	log.Printf("[PUB] SENT OTP: %s\n", otp)
+	err = w.sendWhatsAppOtp(phoneNumber, otp, lang)
 
-	return token, nil
+	return token, err
 }
 
-func (w *WhatsApp) Resend(phoneNumber string) error {
+func (w *WhatsApp) Resend(phoneNumber string, lang string) error {
 	otp, err := updateOtpCounter(w.bucket, phoneNumber)
 
 	if err != nil {
 		return err
 	}
 
-	log.Printf("[PUB] Re-Send SMS to %s", phoneNumber)
-	log.Printf("[PUB] SENT OTP: %s\n", otp)
+	err = w.sendWhatsAppOtp(phoneNumber, otp, lang)
 
-	return nil
+	return err
 }

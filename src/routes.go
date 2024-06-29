@@ -25,9 +25,9 @@ func NewRouteHandler(db *pgx.Conn, fb *firebase.App, pubc *pub.Pub) *RouteHandle
 }
 
 func (rh *RouteHandler) RegisterRoutes(router *http.ServeMux) (http.Handler, error) {
-	router.HandleFunc("POST /verification/send", verification.SendHandler)
-	router.HandleFunc("POST /verification/resend", verification.ResendHandler)
-	router.HandleFunc("POST /verification/verify", verification.VerifyHandler)
+	router.HandleFunc("POST /api/user/verification/send", verification.SendHandler)
+	router.HandleFunc("POST /api/user/verification/resend", verification.ResendHandler)
+	router.HandleFunc("POST /api/user/verification/verify", verification.VerifyHandler)
 
 	injectedHandler := middleware.NewServiceInjector(router, rh.db, rh.pubc)
 	appLimitedHandler, err := middleware.NewAppLimitter(injectedHandler, rh.fb)

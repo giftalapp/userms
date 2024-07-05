@@ -89,6 +89,16 @@ github.com/googleapis/enterprise-certificate-proxy v0.3.2 h1:Vie5ybvEvT75RniqhfF
 github.com/googleapis/enterprise-certificate-proxy v0.3.2/go.mod h1:VLSiSSBs/ksPL8kq3OBOQ6WRI2QnaFynd1DCjZ62+V0=
 github.com/googleapis/gax-go/v2 v2.12.3 h1:5/zPPDvw8Q1SuXjrqrZslrqT7dL/uJT2CQii/cLCKqA=
 github.com/googleapis/gax-go/v2 v2.12.3/go.mod h1:AKloxT6GtNbaLm8QTNSidHUVsHYcBHwWRvkNFJUQcS4=
+github.com/husseinamine/whatsapp v0.0.0-20240703231336-5db21fa53a42 h1:mUcgt4dQo59rQJX7b4xuB/UDpFIGqWOB+yoP3/OBvAo=
+github.com/husseinamine/whatsapp v0.0.0-20240703231336-5db21fa53a42/go.mod h1:uPH6PPaLTSTbSAAbmD/VNhiyUBiAAj0CQgJU78q09BE=
+github.com/husseinamine/whatsapp v0.0.1 h1:fGGL7vhI2ljH+TTVxR5KG8kRy3XxyDfmf7C8isXBeDs=
+github.com/husseinamine/whatsapp v0.0.1/go.mod h1:uPH6PPaLTSTbSAAbmD/VNhiyUBiAAj0CQgJU78q09BE=
+github.com/husseinamine/whatsapp v0.0.11 h1:nfn+VS0eTppKvkgdCrhVI8Sjq5ipSyj6L7aizp5wUDc=
+github.com/husseinamine/whatsapp v0.0.11/go.mod h1:uPH6PPaLTSTbSAAbmD/VNhiyUBiAAj0CQgJU78q09BE=
+github.com/husseinamine/whatsapp v0.0.12 h1:v547doC9saPZ1PFCMJ4drtFVrUdwZf3CGC+t3+wwg24=
+github.com/husseinamine/whatsapp v0.0.12/go.mod h1:uPH6PPaLTSTbSAAbmD/VNhiyUBiAAj0CQgJU78q09BE=
+github.com/husseinamine/whatsapp v0.0.13 h1:OzCiWf+Yi4tjr1AWMkTpITgMNEJehlTQTatrwIq98uo=
+github.com/husseinamine/whatsapp v0.0.13/go.mod h1:uPH6PPaLTSTbSAAbmD/VNhiyUBiAAj0CQgJU78q09BE=
 github.com/jackc/pgpassfile v1.0.0 h1:/6Hmqy13Ss2zCq62VdNG8tM1wchn8zjSGOBJ6icpsIM=
 github.com/jackc/pgpassfile v1.0.0/go.mod h1:CEx0iS5ambNFdcRtxPj5JhEz+xB6uRky5eyVu/W2HEg=
 github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a h1:bbPeKD0xmW/Y25WS6cokEszi5g+S0QxI/d45PkRi7Nk=

@@ -13,9 +13,9 @@ type SendRequest struct {
 }
 
 type SendResponse struct {
-	Token      string `json:"token"`
-	Error      string `json:"error,omitempty"`
-	statusCode int
+	VerificationToken string `json:"verification_token,omitempty"`
+	Error             string `json:"error,omitempty"`
+	statusCode        int
 }
 
 func SendHandler(w http.ResponseWriter, r *http.Request) {
@@ -37,9 +37,10 @@ func SendHandler(w http.ResponseWriter, r *http.Request) {
 	// Create and store token && Send OTP
 	token, err := pubc.WhatsApp.Send(request.PhoneNumber, "en")
 
-	response.Token = token
+	response.VerificationToken = token
 
 	if err != nil {
+		response.VerificationToken = ""
 		response.statusCode, response.Error = handleError(err)
 	}
 

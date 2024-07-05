@@ -1,12 +1,11 @@
 package pub
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/giftalapp/userms/utilities/bucket"
-	"github.com/piusalfred/whatsapp"
-	"github.com/piusalfred/whatsapp/models"
+	"github.com/husseinamine/whatsapp"
+	"github.com/husseinamine/whatsapp/types"
 )
 
 type WhatsApp struct {
@@ -16,16 +15,23 @@ type WhatsApp struct {
 }
 
 func (w *WhatsApp) sendWhatsAppOtp(phoneNumber string, otp string, lang string) error {
-	_, err := w.wa.SendTextTemplate(context.Background(), phoneNumber, &whatsapp.TextTemplateRequest{
-		Name:         "en_verification_code",
-		LanguageCode: lang,
-		Body: []*models.TemplateParameter{
-			{
-				Type: "text",
-				Text: otp,
-			},
-		},
+	factory := whatsapp.NewMessageFactory()
+	factory.WithTo(phoneNumber)
+
+	message := factory.WithTemplate("verification_code", lang)
+	message.WithBody()
+	message.WithBodyParamater(&types.Parameter{
+		Type: types.TextParameter,
+		Text: otp,
 	})
+	message.WithButton(types.URL)
+	message.WithButtonParameter(&types.ButtonParameter{
+		Type: types.TextButtonParameter,
+		Text: otp,
+	})
+	message.Save()
+
+	_, err := w.wa.SendMessage(message.Message)
 
 	if err != nil {
 		err = fmt.Errorf("server_error %s", err)

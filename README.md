@@ -6,7 +6,7 @@ i'm still working on it. The goal is to finish the following checklist
 - [x] implement resend time limits
 - [x] implement expiry
 - [x] implement rate limit by ip address
-- [x] implement WhatsApp send (TODO)
+- [x] implement WhatsApp send
 - [ ] REMOVE THE DEBUG KEY OVERRIDE IN THE app_limitter middleware
 > feel free to re-use this repo
 

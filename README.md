@@ -8,6 +8,7 @@ i'm still working on it. The goal is to finish the following checklist
 - [x] implement rate limit by ip address
 - [x] implement WhatsApp send
 - [ ] REMOVE THE DEBUG KEY OVERRIDE IN THE app_limitter middleware
+- [ ] PREVENT SQL INJECTIONS (HIGHEST PRIORITY!)
 > feel free to re-use this repo
 
 note: to re-use it you need to create 2 files in the root directory

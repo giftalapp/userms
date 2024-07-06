@@ -1,6 +1,7 @@
 package pub
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/giftalapp/userms/utilities/bucket"
@@ -31,7 +32,11 @@ func (w *WhatsApp) sendWhatsAppOtp(phoneNumber string, otp string, lang string) 
 	})
 	message.Save()
 
-	_, err := w.wa.SendMessage(message.Message)
+	res, err := w.wa.SendMessage(message.Message)
+
+	if _, ok := res["error"]; ok {
+		err = fmt.Errorf("server_error %s", res["error"])
+	}
 
 	if err != nil {
 		err = fmt.Errorf("server_error %s", err)
@@ -48,6 +53,18 @@ func (w *WhatsApp) Send(phoneNumber string, lang string) (string, error) {
 	}
 
 	err = w.sendWhatsAppOtp(phoneNumber, otp, lang)
+
+	// Remove the verification token from cache if OTP send fails
+	if err != nil {
+		signedTokenHash, err := getSHA256(token)
+
+		if err != nil {
+			return "", errors.New("server_hash_error")
+		}
+
+		w.bucket.Del(signedTokenHash)
+		w.bucket.Del("counter_" + signedTokenHash)
+	}
 
 	return token, err
 }

@@ -117,6 +117,7 @@ func VerifyHandler(w http.ResponseWriter, r *http.Request) {
 
 		w.WriteHeader(response.statusCode)
 		fmt.Fprintln(w, string(responseBinary))
+		return
 	}
 
 	// Return response
